@@ -10,29 +10,42 @@ phases:
       golang: 1.27
     commands:
       - "go version"
+      - "pwd"
+      - "ls -la"
 
   pre_build:
     commands:
-      - "cd project"
-      - "go mod download"
-      - "go mod verify"
+      - "echo 'Finding go.mod location...'"
+      - "find . -maxdepth 3 -name 'go.mod'"
+      - |
+        TARGET_DIR=$(find . -name "go.mod" -exec dirname {} \; | head -n 1)
+        if [ -n "$TARGET_DIR" ] && [ "$TARGET_DIR" != "." ]; then
+          echo "Switching to directory: $TARGET_DIR"
+          cd "$TARGET_DIR"
+        fi
+        pwd
+        go mod download
+        go mod verify
 
   build:
     commands:
-      - "cd project"
-      - "mkdir -p bin"
-      - "echo 'Building primary entry point as application...'"
-      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o application ./gateway"
-      - "echo 'Building Gateway into bin/...'"
-      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/gateway ./gateway"
-      - "echo 'Building Order into bin/...'"
-      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/order ./order"
-      - "echo 'Building Product into bin/...'"
-      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/product ./product"
+      - |
+        TARGET_DIR=$(find . -name "go.mod" -exec dirname {} \; | head -n 1)
+        if [ -n "$TARGET_DIR" ] && [ "$TARGET_DIR" != "." ]; then
+          cd "$TARGET_DIR"
+        fi
+        mkdir -p bin
+        echo "Building primary entry point as application..."
+        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o application ./gateway
+        echo "Building Gateway into bin/..."
+        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/gateway ./gateway
+        echo "Building Order into bin/..."
+        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/order ./order
+        echo "Building Product into bin/..."
+        CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/product ./product
 
 artifacts:
-  base-directory: project
   files:
-    - application
-    - Procfile
-    - bin/**/*
+    - "**/application"
+    - "**/Procfile"
+    - "**/bin/*"
