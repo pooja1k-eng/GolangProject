@@ -13,11 +13,13 @@ phases:
 
   pre_build:
     commands:
+      - "cd project"
       - "go mod download"
       - "go mod verify"
 
   build:
     commands:
+      - "cd project"
       - "mkdir -p bin"
       - "echo 'Building primary entry point as application...'"
       - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o application ./gateway"
@@ -29,6 +31,7 @@ phases:
       - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/product ./product"
 
 artifacts:
+  base-directory: project
   files:
     - application
     - Procfile
