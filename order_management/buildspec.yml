@@ -13,21 +13,16 @@ phases:
 
   pre_build:
     commands:
-      - "go mod download"
-      - "go mod verify"
-      - "go test -v ./..."
+      - "pwd"
+      - "ls -la"
+      - "if [ -f go.mod ]; then echo 'Root has go.mod'; elif [ -d project ] && [ -f project/go.mod ]; then cd project; elif [ -d GolangProject ] && [ -f GolangProject/go.mod ]; then cd GolangProject; else cd $(dirname $(find . -name 'go.mod' | head -n 1)); fi; pwd; go mod download; go mod verify; go test -v ./..."
 
   build:
     commands:
-      - "mkdir -p bin"
-      - "echo 'Compiling services...'"
-      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o application ./gateway"
-      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/gateway ./gateway"
-      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/order ./order"
-      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/product ./product"
+      - "if [ -f go.mod ]; then echo 'Root has go.mod'; elif [ -d project ] && [ -f project/go.mod ]; then cd project; elif [ -d GolangProject ] && [ -f GolangProject/go.mod ]; then cd GolangProject; else cd $(dirname $(find . -name 'go.mod' | head -n 1)); fi; mkdir -p bin; echo 'Compiling services...'; CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o application ./gateway; CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/gateway ./gateway; CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/order ./order; CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/product ./product"
 
 artifacts:
   files:
-    - application
-    - Procfile
-    - bin/*
+    - "**/application"
+    - "**/Procfile"
+    - "**/bin/*"
