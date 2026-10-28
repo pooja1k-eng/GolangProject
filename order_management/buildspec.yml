@@ -34,6 +34,7 @@ phases:
         CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/gateway ./gateway
         CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/order ./order
         CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/product ./product
+        - go test -v ./...
 
 artifacts:
   files:
