@@ -1,0 +1,35 @@
+version: 0.2
+
+env:
+  variables:
+    GOCACHE: "/root/.cache/go-build"
+
+phases:
+  install:
+    runtime-versions:
+      golang: 1.27
+    commands:
+      - "go version"
+
+  pre_build:
+    commands:
+      - "go mod download"
+      - "go mod verify"
+
+  build:
+    commands:
+      - "mkdir -p bin"
+      - "echo 'Building primary entry point as application...'"
+      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o application ./gateway"
+      - "echo 'Building Gateway into bin/...'"
+      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/gateway ./gateway"
+      - "echo 'Building Order into bin/...'"
+      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/order ./order"
+      - "echo 'Building Product into bin/...'"
+      - "CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -o bin/product ./product"
+
+artifacts:
+  files:
+    - application
+    - Procfile
+    - bin/**/*

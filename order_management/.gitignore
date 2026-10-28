@@ -1,0 +1,48 @@
+# Binaries and executables
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+bin/
+dist/
+build/
+*-bin
+
+# Go artifacts
+*.out
+*.test
+*.prof
+vendor/
+
+# Environment and sensitive credential files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# SoapUI temporary files and logs
+soapui.log
+soapui-errors.log
+readyapi.log
+*.log
+
+# Database and local container data
+*.db
+*.sqlite
+postgres-data/
+
+# IDE and Editor configurations
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Prometheus temporary metrics data (if stored locally)
+data/
+prometheus_data/
